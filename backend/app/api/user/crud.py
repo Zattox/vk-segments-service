@@ -1,35 +1,40 @@
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
+from fastapi import HTTPException, status
 from typing import List, Optional
 
 from backend.app.schemes import UserCreate
 from backend.app.models import TableUser, TableSegment
-
-from ..segment import get_segment
+from .dependencies import get_user_by_username
 
 
 def create_user(
     session: Session,
-    user: UserCreate,
+    user_in: UserCreate,
 ) -> TableUser:
-    db_user = TableUser(**user.model_dump())
-    session.add(db_user)
-    session.commit()
-    session.refresh(db_user)
+    db_user = TableUser(**user_in.model_dump())
+    try:
+        session.add(db_user)
+        session.commit()
+        session.refresh(db_user)
+    except IntegrityError:
+        session.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"User {user_in.username} already exists",
+        )
     return db_user
 
 
 def get_user(
     session: Session,
-    user_id: int,
-) -> Optional[TableUser]:
-    return session.query(TableUser).filter(TableUser.id == user_id).first()
-
-
-def get_user_by_username(
-    session: Session,
     username: str,
 ) -> Optional[TableUser]:
-    return session.query(TableUser).filter(TableUser.username == username).first()
+    db_user = get_user_by_username(
+        session=session,
+        username=username,
+    )
+    return db_user
 
 
 def get_users(
@@ -48,23 +53,16 @@ def get_total_users_count(
 
 
 def get_user_segments(
-    session: Session,
-    user_id: int,
+    user: TableUser,
 ) -> List[TableSegment]:
-    user = get_user(session, user_id)
-    if user:
-        return user.segments
-    return []
+    return user.segments
 
 
 def add_segment_to_user(
     session: Session,
-    user_id: int,
-    segment_id: int,
+    user: TableUser,
+    segment: TableSegment,
 ) -> TableUser:
-    user = get_user(session, user_id)
-    segment = get_segment(session, segment_id)
-
     if user and segment and segment not in user.segments:
         user.segments.append(segment)
         session.commit()
@@ -74,12 +72,9 @@ def add_segment_to_user(
 
 def remove_segment_from_user(
     session: Session,
-    user_id: int,
-    segment_id: int,
+    user: TableUser,
+    segment: TableSegment,
 ) -> TableUser:
-    user = get_user(session, user_id)
-    segment = get_segment(session, segment_id)
-
     if user and segment and segment in user.segments:
         user.segments.remove(segment)
         session.commit()

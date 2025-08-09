@@ -2,12 +2,11 @@ __all__ = (
     "ResponseSegment",
     "SegmentCreate",
     "SegmentUpdate",
-    "User",
+    "ResponseUser",
     "UserCreate",
-    "UserWithSegments",
     "DistributionResult",
 )
 
 from .segment import ResponseSegment, SegmentCreate, SegmentUpdate
-from .user import User, UserCreate, UserWithSegments
+from .user import ResponseUser, UserCreate
 from .utils import DistributionResult

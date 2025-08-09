@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
-from .segment import Segment
 from typing import List
 
 
@@ -14,13 +13,9 @@ class UserCreate(UserBase):
     pass
 
 
-class User(UserBase):
-    id: int
+class ResponseUser(UserBase):
     created_at: datetime
+    segments: List[str] = []
 
     class Config:
         from_attributes = True
-
-
-class UserWithSegments(User):
-    segments: List[Segment] = []

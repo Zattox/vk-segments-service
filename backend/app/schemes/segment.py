@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
-from .user import User
 from typing import List
 
 
