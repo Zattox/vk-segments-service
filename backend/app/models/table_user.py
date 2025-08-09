@@ -9,6 +9,7 @@ from backend.app.base import Base
 if TYPE_CHECKING:
     from .table_segment import TableSegment
 
+
 class TableUser(Base):
     username: Mapped[str] = mapped_column(unique=True, nullable=False)
 

@@ -3,6 +3,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from backend.app.base import Base
 
+
 class UserSegmentAssociation(Base):
     __tablename__ = "user_segment_association"
 
