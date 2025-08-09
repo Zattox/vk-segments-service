@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, List
 from sqlalchemy import text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from backend.app.base import Base
+from .base import Base
 
 if TYPE_CHECKING:
     from .table_user import TableUser

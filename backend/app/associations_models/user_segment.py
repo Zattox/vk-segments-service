@@ -1,7 +1,7 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
-from backend.app.base import Base
+from backend.app.models.base import Base
 
 
 class UserSegmentAssociation(Base):
