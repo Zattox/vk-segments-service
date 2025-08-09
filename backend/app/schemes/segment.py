@@ -20,15 +20,11 @@ class SegmentUpdate(BaseModel):
     is_active: Optional[bool] = None
 
 
-class Segment(SegmentBase):
-    id: int
+class ResponseSegment(SegmentBase):
     is_active: bool
     created_at: datetime
     updated_at: Optional[datetime] = None
+    users: List[str] = []
 
     class Config:
         from_attributes = True
-
-
-class SegmentWithUsers(Segment):
-    users: List[User] = []

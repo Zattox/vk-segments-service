@@ -1,33 +1,42 @@
+from fastapi import HTTPException, status
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
 from backend.app.schemes import SegmentCreate, SegmentUpdate
 from backend.app.models import TableSegment
 
+from .dependencies import get_segment_by_name
+
 
 def create_segment(
     session: Session,
-    segment: SegmentCreate,
+    segment_in: SegmentCreate,
 ) -> TableSegment:
-    db_segment = TableSegment(**segment.model_dump())
-    session.add(db_segment)
-    session.commit()
-    session.refresh(db_segment)
+    db_segment = TableSegment(**segment_in.model_dump())
+    try:
+        session.add(db_segment)
+        session.commit()
+        session.refresh(db_segment)
+    except IntegrityError:
+        session.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Segment {segment_in.name} already exists",
+        )
+
     return db_segment
 
 
 def get_segment(
     session: Session,
-    segment_id: int,
+    segment_name: str,
 ) -> Optional[TableSegment]:
-    return session.query(TableSegment).filter(TableSegment.id == segment_id).first()
-
-
-def get_segment_by_name(
-    session: Session,
-    name: str,
-) -> Optional[TableSegment]:
-    return session.query(TableSegment).filter(TableSegment.name == name).first()
+    db_segment = get_segment_by_name(
+        session=session,
+        name=segment_name,
+    )
+    return db_segment
 
 
 def get_segments(
@@ -41,38 +50,25 @@ def get_segments(
 
 def update_segment(
     session: Session,
-    segment_id: int,
+    segment: TableSegment,
     segment_update: SegmentUpdate,
-) -> Optional[TableSegment]:
-    db_segment = (
-        session.query(TableSegment).filter(TableSegment.id == segment_id).first()
-    )
-    if db_segment:
-        update_data = segment_update.model_dump(exclude_unset=True)
-        for key, value in update_data.items():
-            setattr(db_segment, key, value)
-        session.commit()
-        session.refresh(db_segment)
-    return db_segment
+) -> TableSegment:
+    for class_field, value in segment_update.model_dump(exclude_unset=True).items():
+        setattr(segment, class_field, value)
+    session.commit()
+    session.refresh(segment)
+    return segment
 
 
 def delete_segment(
     session: Session,
-    segment_id: int,
+    segment: TableSegment,
 ) -> None:
-    db_segment = (
-        session.query(TableSegment).filter(TableSegment.id == segment_id).first()
-    )
-    if db_segment:
-        session.delete(db_segment)
-        session.commit()
+    session.delete(segment)
+    session.commit()
 
 
 def get_segment_users_count(
-    session: Session,
-    segment_id: int,
+    db_segment: TableSegment,
 ) -> int:
-    segment = get_segment(session, segment_id)
-    if segment:
-        return len(segment.users)
-    return 0
+    return len(db_segment.users)

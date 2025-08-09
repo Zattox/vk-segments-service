@@ -1,24 +1,18 @@
 from sqlalchemy.orm import Session
-from typing import Optional
 import random
 
 from backend.app.models import TableSegment, TableUser
 from backend.app.schemes import DistributionResult
 
 from ..user import get_total_users_count, add_segment_to_user
-from ..segment import get_segment_by_name
 
 
 def distribute_segment_randomly(
     session: Session,
-    segment_name: str,
+    segment: TableSegment,
     percentage: float,
-) -> Optional[DistributionResult]:
+) -> DistributionResult:
     """Distribute segment to random percentage of users"""
-    segment = get_segment_by_name(session, segment_name)
-    if not segment:
-        return None
-
     total_users = get_total_users_count(session)
     target_count = int(total_users * (percentage / 100))
 
@@ -44,7 +38,7 @@ def distribute_segment_randomly(
     actual_percentage = (assigned_count / total_users) * 100 if total_users > 0 else 0
 
     result = DistributionResult(
-        segment_name=segment_name,
+        segment_name=segment.name,
         total_users=total_users,
         assigned_users=assigned_count,
         percentage_achieved=actual_percentage,
