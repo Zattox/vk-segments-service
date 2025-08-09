@@ -11,7 +11,7 @@ from backend.app.schemes import (
     DistributionResult,
 )
 
-from backend.app.database import get_db
+from backend.app.db_helper import get_db
 from backend.app.models import TableSegment
 
 router = APIRouter(prefix="/segments", tags=["segments"])

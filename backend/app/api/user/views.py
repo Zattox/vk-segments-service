@@ -9,7 +9,7 @@ from backend.app.schemes import (
     ResponseSegment,
 )
 
-from backend.app.database import get_db
+from backend.app.db_helper import get_db
 from backend.app.models import TableUser, TableSegment
 
 from ..segment import get_segment_by_name
