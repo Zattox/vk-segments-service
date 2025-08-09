@@ -4,5 +4,5 @@ __all__ = (
     "get_segments",
 )
 
-from crud import get_segment, get_segments
-from dependencies import get_segment_by_name
+from .crud import get_segment, get_segments
+from .dependencies import get_segment_by_name
