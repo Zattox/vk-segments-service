@@ -69,7 +69,7 @@ def get_users(
 
 
 @router.get(
-    "/{user_id}",
+    "/{username}/",
     response_model=ResponseUser,
     status_code=status.HTTP_200_OK,
 )
@@ -86,7 +86,7 @@ def get_user(
 
 
 @router.get(
-    "/{user_id}/segments",
+    "/{username}/segments/",
     response_model=List[ResponseSegment],
     status_code=status.HTTP_200_OK,
 )
@@ -100,7 +100,7 @@ def get_user_segments(
 
 
 @router.post(
-    "/{user_id}/segments/{segment_id}",
+    "/{username}/segments/{segment_name}/",
     response_model=ResponseUser,
     status_code=status.HTTP_200_OK,
 )
@@ -118,7 +118,7 @@ def add_user_to_segment(
 
 
 @router.delete(
-    "/{user_id}/segments/{segment_id}",
+    "/{username}/segments/{segment_name}/",
     response_model=ResponseUser,
     status_code=status.HTTP_200_OK,
 )

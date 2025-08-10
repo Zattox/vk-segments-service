@@ -34,7 +34,7 @@ def get_segment(
 ) -> Optional[TableSegment]:
     db_segment = get_segment_by_name(
         session=session,
-        name=segment_name,
+        segment_name=segment_name,
     )
     return db_segment
 

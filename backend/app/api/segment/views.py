@@ -69,7 +69,7 @@ def get_segments(
 
 
 @router.get(
-    "/{segment_id}",
+    "/{segment_name}/",
     response_model=ResponseSegment,
     status_code=status.HTTP_200_OK,
 )
@@ -84,8 +84,8 @@ def get_segment(
     return table_to_response_form(db_segment)
 
 
-@router.put(
-    "/{segment_id}",
+@router.patch(
+    "/{segment_name}/",
     response_model=ResponseSegment,
     status_code=status.HTTP_200_OK,
 )
@@ -103,7 +103,7 @@ def update_segment(
 
 
 @router.delete(
-    "/{segment_id}",
+    "/{segment_name}/",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 def delete_segment(
@@ -117,7 +117,7 @@ def delete_segment(
 
 
 @router.post(
-    "/distribute",
+    "/{segment_name}/distribute/",
     response_model=DistributionResult,
 )
 def distribute_segment(
