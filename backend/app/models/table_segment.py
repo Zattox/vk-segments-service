@@ -23,6 +23,8 @@ class TableSegment(Base):
         server_default=func.now(),
     )
     updated_at: Mapped[datetime] = mapped_column(
+        default=datetime.now,
+        server_default=func.now(),
         onupdate=func.now(),
     )
 
