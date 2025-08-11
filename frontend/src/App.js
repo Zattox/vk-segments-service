@@ -3,6 +3,7 @@ import './App.css';
 import SegmentForm from './components/SegmentForm';
 import SegmentManager from './components/SegmentManager';
 import UserSegments from './components/UserSegments';
+import UserForm from "./components/UserForm";
 
 function App() {
   const [message, setMessage] = useState('');
@@ -35,14 +36,23 @@ function App() {
 
       <div className="dashboard">
         <div className="section">
+          <h2>Create New User</h2>
+          <UserForm
+            onSuccess={handleSuccess}
+            onError={handleError}
+          />
+        </div>
+        <div className="section">
           <h2>Create New Segment</h2>
           <SegmentForm
             onSuccess={handleSuccess}
             onError={handleError}
           />
         </div>
+      </div>
 
-        <div className="section">
+      <div className="dashboard">
+        <div className="section" style={{ gridColumn: '1 / -1' }}>
           <h2>View User Segments</h2>
           <UserSegments
             onSuccess={handleSuccess}
