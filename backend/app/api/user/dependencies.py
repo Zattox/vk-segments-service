@@ -3,8 +3,8 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException, status, Path
 
-from backend.app.models import TableUser
-from backend.app import db_helper
+from ...models import TableUser
+from ... import db_helper
 
 
 def get_user_by_username(

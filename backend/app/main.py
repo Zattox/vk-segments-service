@@ -4,9 +4,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from backend.app.db_helper import engine
-from backend.app.models import Base
-from backend.app.api import user_router, segment_router
+from .db_helper import engine
+from .models import Base
+from .api import user_router, segment_router
 
 
 @asynccontextmanager

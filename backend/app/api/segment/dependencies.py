@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Path, Depends
 from typing import Annotated
-from backend.app.models import TableSegment
-from backend.app import db_helper
+from ...models import TableSegment
+from ... import db_helper
 
 
 def get_segment_by_name(

@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 import random
 
-from backend.app.models import TableSegment, TableUser
-from backend.app.schemes import DistributionResult
+from ...models import TableSegment, TableUser
+from ...schemes import DistributionResult
 
 from ..user import get_total_users_count, add_segment_to_user
 

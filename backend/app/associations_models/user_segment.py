@@ -1,7 +1,7 @@
 from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
-from backend.app.models.base import Base
+from ..models.base import Base
 
 
 class UserSegmentAssociation(Base):

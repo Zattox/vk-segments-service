@@ -3,8 +3,8 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
-from backend.app.schemes import SegmentCreate, SegmentUpdate
-from backend.app.models import TableSegment
+from ...schemes import SegmentCreate, SegmentUpdate
+from ...models import TableSegment
 
 from .dependencies import get_segment_by_name
 

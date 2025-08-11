@@ -4,15 +4,15 @@ from typing import List
 from . import crud, dependencies
 from ..utils import distribute_segment_randomly
 
-from backend.app.schemes import (
+from ...schemes import (
     ResponseSegment,
     SegmentUpdate,
     SegmentCreate,
     DistributionResult,
 )
 
-from backend.app.db_helper import get_db
-from backend.app.models import TableSegment
+from ...db_helper import get_db
+from ...models import TableSegment
 
 router = APIRouter(prefix="/segments", tags=["segments"])
 

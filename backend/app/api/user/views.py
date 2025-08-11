@@ -3,14 +3,14 @@ from sqlalchemy.orm import Session
 from typing import List
 from . import crud, dependencies
 
-from backend.app.schemes import (
+from ...schemes import (
     ResponseUser,
     UserCreate,
     ResponseSegment,
 )
 
-from backend.app.db_helper import get_db
-from backend.app.models import TableUser, TableSegment
+from ...db_helper import get_db
+from ...models import TableUser, TableSegment
 
 from ..segment import get_segment_by_name
 
@@ -104,7 +104,7 @@ def get_user_segments(
     response_model=ResponseUser,
     status_code=status.HTTP_200_OK,
 )
-def add_user_to_segment(
+def add_segment_to_user(
     user: TableUser = Depends(dependencies.get_user_by_username),
     segment: TableSegment = Depends(get_segment_by_name),
     session: Session = Depends(get_db),
@@ -122,7 +122,7 @@ def add_user_to_segment(
     response_model=ResponseUser,
     status_code=status.HTTP_200_OK,
 )
-def remove_user_from_segment(
+def remove_segment_from_user(
     user: TableUser = Depends(dependencies.get_user_by_username),
     segment: TableSegment = Depends(get_segment_by_name),
     session: Session = Depends(get_db),

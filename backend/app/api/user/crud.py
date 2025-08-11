@@ -3,8 +3,8 @@ from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException, status
 from typing import List, Optional
 
-from backend.app.schemes import UserCreate
-from backend.app.models import TableUser, TableSegment
+from ...schemes import UserCreate
+from ...models import TableUser, TableSegment
 from .dependencies import get_user_by_username
 
 
