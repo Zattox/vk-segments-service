@@ -10,7 +10,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d segments_db"]
+      test: [ "CMD-SHELL", "pg_isready -U user -d segments_db" ]
       interval: 10s
       retries: 5
 
@@ -35,12 +35,12 @@ services:
     depends_on:
       - backend
     environment:
-      REACT_APP_API_URL: http://backend:8000/api
+      VITE_API_URL: http://backend:8000/api
     ports:
-      - "3000:3000"
+      - "3000:80"
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - ./frontend:/app     # исходники для локальной разработки (опционально)
+      - /app/node_modules   # для кеширования зависимостей
 
 volumes:
   postgres_data:

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import './App.css';
+import React, {useState} from 'react';
+import UserForm from './components/UserForm';
 import SegmentForm from './components/SegmentForm';
-import SegmentManager from './components/SegmentManager';
 import UserSegments from './components/UserSegments';
-import UserForm from "./components/UserForm";
+import SegmentManager from './components/SegmentManager';
+import './index.css';
 
 function App() {
   const [message, setMessage] = useState('');
@@ -22,14 +22,12 @@ function App() {
   const handleError = (text) => showMessage(text, 'error');
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>VK User Segments Manager</h1>
-        <p>Manage user segments for experiments and feature testing</p>
-      </header>
+    <div className="app-container">
+      <h1>VK User Segments Manager</h1>
+      <p>Manage user segments for experiments and feature testing</p>
 
       {message && (
-        <div className={`${messageType === 'success' ? 'success-message' : 'error-message'}`}>
+        <div className={`alert ${messageType === 'success' ? 'alert-success' : 'alert-error'}`}>
           {message}
         </div>
       )}
@@ -37,35 +35,22 @@ function App() {
       <div className="dashboard">
         <div className="section">
           <h2>Create New User</h2>
-          <UserForm
-            onSuccess={handleSuccess}
-            onError={handleError}
-          />
+          <UserForm onSuccess={handleSuccess} onError={handleError}/>
         </div>
         <div className="section">
           <h2>Create New Segment</h2>
-          <SegmentForm
-            onSuccess={handleSuccess}
-            onError={handleError}
-          />
+          <SegmentForm onSuccess={handleSuccess} onError={handleError}/>
         </div>
       </div>
 
       <div className="dashboard">
-        <div className="section" style={{ gridColumn: '1 / -1' }}>
+        <div className="section full-width">
           <h2>View User Segments</h2>
-          <UserSegments
-            onSuccess={handleSuccess}
-            onError={handleError}
-          />
+          <UserSegments onSuccess={handleSuccess} onError={handleError}/>
         </div>
-
-        <div className="section" style={{ gridColumn: '1 / -1' }}>
+        <div className="section full-width">
           <h2>Manage Segments</h2>
-          <SegmentManager
-            onSuccess={handleSuccess}
-            onError={handleError}
-          />
+          <SegmentManager onSuccess={handleSuccess} onError={handleError}/>
         </div>
       </div>
     </div>

@@ -1,17 +1,28 @@
-FROM node:18-alpine
+# ── 1. Этап сборки ─────────────────────────────────────────────
+FROM node:18-alpine AS builder
 
-# Рабочая директория
 WORKDIR /app
 
-# Копируем package-файлы и устанавливаем зависимости
+# Копируем package и lock-файл, устанавливаем зависимости
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm ci
 
-# Копируем весь фронтенд-код
+# Копируем исходники и собираем
 COPY . .
+RUN npm run build
+
+# ── 2. Этап финального образа ────────────────────────────────
+FROM nginx:stable-alpine
+
+# Убираем дефолтный конфиг и подставляем наш
+RUN rm /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/
+
+# Копируем собранную статику из builder
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Открываем порт
-EXPOSE 3000
+EXPOSE 80
 
-# Запуск dev-сервера
-CMD ["npm", "start"]
+# Запускаем nginx
+CMD ["nginx", "-g", "daemon off;"]
