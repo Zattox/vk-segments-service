@@ -1,9 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import {segmentsAPI} from '../services/api';
 
-const SegmentManager = ({onError, onSuccess}) => {
+const SegmentManager = ({onError, onSuccess, onSegmentDeleted}) => {
   const [segments, setSegments] = useState([]);
-  const [distribution, setDistribution] = useState({segment_name: '', percentage: ''});
+  const [distribution, setDistribution] = useState({
+    segment_name: '',
+    percentage: '',
+  });
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -24,6 +27,7 @@ const SegmentManager = ({onError, onSuccess}) => {
     try {
       await segmentsAPI.delete(name);
       onSuccess('Segment deleted successfully!');
+      onSegmentDeleted();      // notify App
       fetchAll();
     } catch {
       onError('Failed to delete segment');
@@ -46,7 +50,9 @@ const SegmentManager = ({onError, onSuccess}) => {
         distribution.segment_name,
         parseFloat(distribution.percentage)
       );
-      onSuccess(`Assigned ${res.data.assigned_users} users to ${res.data.segment_name}`);
+      onSuccess(
+        `Assigned ${res.data.assigned_users} users to ${res.data.segment_name}`
+      );
       setDistribution({segment_name: '', percentage: ''});
     } catch {
       onError('Failed to distribute');
@@ -57,46 +63,35 @@ const SegmentManager = ({onError, onSuccess}) => {
 
   return (
     <>
-      <h3>Current Segments</h3>
-
       <ul className="segment-list">
-        {segments.length === 0 ? (
-          <li className="empty-state">No segments found.</li>
-        ) : (
-          segments.map(s => (
-            <li key={s.name} className={`segment-item ${s.is_active ? '' : 'inactive'}`}>
-              <div className="segment-info">
-                <h4>{s.name}</h4>
-                <p>{s.description || 'No description'}</p>
-                <span className={`status-badge ${s.is_active ? 'status-active' : 'status-inactive'}`}>
-                  {s.is_active ? 'Active' : 'Inactive'}
-                </span>
-              </div>
-              <button
-                className="btn btn-small btn-danger"
-                onClick={() => handleDelete(s.name)}
-              >
-                Delete
-              </button>
-            </li>
-          ))
-        )}
+        {segments.map(s => (
+          <li
+            key={s.name}
+            className={`segment-item ${s.is_active ? '' : 'inactive'}`}
+          >
+            <div className="segment-info">
+              <h4>{s.name}</h4>
+              <p>{s.description || 'No description'}</p>
+            </div>
+            <button
+              className="btn btn-danger btn-small"
+              onClick={() => handleDelete(s.name)}
+            >
+              Delete
+            </button>
+          </li>
+        ))}
       </ul>
-
-      <form className="section" onSubmit={handleDistribute}>
-        <h3>Distribute Segment</h3>
+      <form onSubmit={handleDistribute} className="mt-3">
         <div className="form-group">
-          <label htmlFor="dist-segment" className="form-label">
-            Select Segment
-          </label>
+          <label className="form-label">Segment</label>
           <select
-            id="dist-segment"
             name="segment_name"
             className="form-select"
             value={distribution.segment_name}
             onChange={handleDistChange}
           >
-            <option value="">-- Select a segment --</option>
+            <option value="">Select…</option>
             {segments.map(s => (
               <option key={s.name} value={s.name}>
                 {s.name}
@@ -104,25 +99,18 @@ const SegmentManager = ({onError, onSuccess}) => {
             ))}
           </select>
         </div>
-
         <div className="form-group">
-          <label htmlFor="dist-percent" className="form-label">
-            Percentage of Users (%)
-          </label>
+          <label className="form-label">Percentage %</label>
           <input
-            id="dist-percent"
-            name="percentage"
             type="number"
+            name="percentage"
             className="form-control"
-            placeholder="e.g., 30"
             value={distribution.percentage}
             onChange={handleDistChange}
-            disabled={isLoading}
           />
         </div>
-
-        <button type="submit" className="btn btn-success" disabled={isLoading}>
-          {isLoading ? 'Distributing…' : 'Distribute'}
+        <button className="btn btn-success" disabled={isLoading}>
+          Distribute
         </button>
       </form>
     </>

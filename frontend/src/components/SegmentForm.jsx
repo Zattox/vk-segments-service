@@ -1,24 +1,23 @@
 import React, {useState} from 'react';
 import {segmentsAPI} from '../services/api';
 
-const SegmentForm = ({onSegmentCreated, onError, onSuccess}) => {
+const SegmentForm = ({onError, onSuccess, onSegmentCreated}) => {
   const [formData, setFormData] = useState({name: '', description: ''});
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleChange = e => {
+  const handleChange = e =>
     setFormData({...formData, [e.target.name]: e.target.value});
-  };
 
   const handleSubmit = async e => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await segmentsAPI.create(formData);
+      const res = await segmentsAPI.create(formData);
       onSuccess('Segment created successfully!');
+      onSegmentCreated();           // уведомляем App о новом сегменте
       setFormData({name: '', description: ''});
-      if (onSegmentCreated) onSegmentCreated(response.data);
-    } catch (error) {
-      onError(error.response?.data?.detail || 'Failed to create segment');
+    } catch (err) {
+      onError(err.response?.data?.detail || 'Failed to create segment');
     } finally {
       setIsLoading(false);
     }
@@ -33,7 +32,6 @@ const SegmentForm = ({onSegmentCreated, onError, onSuccess}) => {
         <input
           id="segment-name"
           name="name"
-          type="text"
           className="form-control"
           placeholder="e.g., MAIL_VOICE_MESSAGE"
           value={formData.name}
@@ -42,7 +40,6 @@ const SegmentForm = ({onSegmentCreated, onError, onSuccess}) => {
           required
         />
       </div>
-
       <div className="form-group">
         <label htmlFor="segment-desc" className="form-label">
           Description
@@ -57,7 +54,6 @@ const SegmentForm = ({onSegmentCreated, onError, onSuccess}) => {
           disabled={isLoading}
         />
       </div>
-
       <button type="submit" className="btn" disabled={isLoading}>
         {isLoading ? 'Creating…' : 'Create Segment'}
       </button>

@@ -3,8 +3,7 @@ import random
 
 from ...models import TableSegment, TableUser
 from ...schemes import DistributionResult
-
-from ..user import get_total_users_count, add_segment_to_user
+from ..user.crud import get_total_users_count, add_segment_to_user
 
 
 def distribute_segment_randomly(
@@ -12,7 +11,8 @@ def distribute_segment_randomly(
     segment: TableSegment,
     percentage: float,
 ) -> DistributionResult:
-    """Distribute segment to random percentage of users"""
+    """Distribute segment to a random percentage of users."""
+    # Total users in the system
     total_users = get_total_users_count(session)
     target_count = int(total_users * (percentage / 100))
 
@@ -32,16 +32,17 @@ def distribute_segment_randomly(
     # Add selected users to segment
     assigned_count = 0
     for user in selected_users:
-        if add_segment_to_user(session, user.id, segment.id):
-            assigned_count += 1
+        add_segment_to_user(session=session, user=user, segment=segment)
+        assigned_count += 1
 
-    actual_percentage = (assigned_count / total_users) * 100 if total_users > 0 else 0
+    # Calculate actual achieved percentage
+    actual_percentage = (assigned_count / total_users) * 100 if total_users > 0 else 0.0
 
+    # Return distribution result
     result = DistributionResult(
         segment_name=segment.name,
         total_users=total_users,
         assigned_users=assigned_count,
         percentage_achieved=actual_percentage,
     )
-
     return result

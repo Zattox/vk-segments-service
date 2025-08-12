@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {usersAPI, segmentsAPI} from '../services/api';
 
-const UserSegments = ({onError, onSuccess}) => {
+const UserSegments = ({onError, onSuccess, segmentsVersion}) => {
   const [users, setUsers] = useState([]);
   const [segments, setSegments] = useState([]);
   const [selectedUsername, setSelectedUsername] = useState('');
@@ -26,6 +26,16 @@ const UserSegments = ({onError, onSuccess}) => {
     }
   }, [onError]);
 
+  // re-fetch segment list whenever segmentsVersion changes
+  useEffect(() => {
+    fetchAllSegments();
+    // if a user is selected, re-fetch that user's segments too
+    if (selectedUsername) {
+      fetchUserSegments(selectedUsername);
+    }
+  }, [segmentsVersion]);
+
+  // initial load of users and segments
   useEffect(() => {
     fetchUsers();
     fetchAllSegments();
@@ -81,16 +91,13 @@ const UserSegments = ({onError, onSuccess}) => {
   return (
     <>
       <div className="form-group">
-        <label className="form-label" htmlFor="select-user">
-          Select User
-        </label>
+        <label className="form-label">User</label>
         <select
-          id="select-user"
           className="form-select"
           value={selectedUsername}
           onChange={handleUserSelect}
         >
-          <option value="">-- Select a user --</option>
+          <option value="">Select…</option>
           {users.map(u => (
             <option key={u.username} value={u.username}>
               {u.username}
@@ -99,57 +106,55 @@ const UserSegments = ({onError, onSuccess}) => {
         </select>
       </div>
 
-      {isLoading && <div className="loading">Loading segments…</div>}
-
-      {!isLoading && selectedUsername && (
-        <ul className="segment-list user-segments">
-          {userSegments.length === 0 ? (
-            <li className="empty-state">This user has no segments.</li>
-          ) : (
-            userSegments.map(s => (
-              <li key={s.name} className="segment-item">
-                <div className="d-flex align-items-center segment-info">
-                  <span className="segment-tag">{s.name}</span>
-                  <span className={`status-badge ${s.is_active ? 'status-active' : 'status-inactive'}`}>
-                    {s.is_active ? 'Active' : 'Inactive'}
+      {isLoading ? (
+        <div className="loading">Loading…</div>
+      ) : (
+        <>
+          <div className="user-segments">
+            <h3>Assigned Segments</h3>
+            <ul className="segment-list">
+              {userSegments.map(s => (
+                <li key={s.name} className="segment-item">
+                  <span className="segment-info">
+                    <h4>{s.name}</h4>
+                    <p>{s.description}</p>
                   </span>
-                </div>
-                <button
-                  className="btn btn-small btn-danger"
-                  onClick={() => handleRemove(s.name)}
-                >
-                  Remove
-                </button>
-              </li>
-            ))
-          )}
-        </ul>
-      )}
-
-      {!isLoading && selectedUsername && segments.length > 0 && (
-        <div className="available-segments">
-          <h3>Available Segments</h3>
-          <ul className="segment-list">
-            {availableSegments().length === 0 ? (
-              <li className="empty-state">All segments assigned.</li>
-            ) : (
-              availableSegments().map(s => (
-                <li key={s.name} className="segment-item inactive">
-                  <div className="d-flex align-items-center segment-info">
-                    <span className="segment-tag">{s.name}</span>
-                    <span className="status-badge status-inactive">Not Assigned</span>
-                  </div>
                   <button
-                    className="btn btn-small btn-success"
+                    className="btn btn-danger btn-small"
+                    onClick={() => handleRemove(s.name)}
+                  >
+                    Remove
+                  </button>
+                </li>
+              ))}
+              {userSegments.length === 0 && (
+                <div className="empty-state">No segments assigned</div>
+              )}
+            </ul>
+          </div>
+          <div className="available-segments">
+            <h3>Available Segments</h3>
+            <ul className="segment-list">
+              {availableSegments().map(s => (
+                <li key={s.name} className="segment-item">
+                  <span className="segment-info">
+                    <h4>{s.name}</h4>
+                    <p>{s.description}</p>
+                  </span>
+                  <button
+                    className="btn btn-success btn-small"
                     onClick={() => handleAdd(s.name)}
                   >
                     Add
                   </button>
                 </li>
-              ))
-            )}
-          </ul>
-        </div>
+              ))}
+              {availableSegments().length === 0 && (
+                <div className="empty-state">No available segments</div>
+              )}
+            </ul>
+          </div>
+        </>
       )}
     </>
   );
