@@ -14,7 +14,7 @@ const SegmentForm = ({onError, onSuccess, onSegmentCreated}) => {
     try {
       const res = await segmentsAPI.create(formData);
       onSuccess('Segment created successfully!');
-      onSegmentCreated();           // уведомляем App о новом сегменте
+      onSegmentCreated();
       setFormData({name: '', description: ''});
     } catch (err) {
       onError(err.response?.data?.detail || 'Failed to create segment');

@@ -27,7 +27,7 @@ const SegmentManager = ({onError, onSuccess, onSegmentDeleted}) => {
     try {
       await segmentsAPI.delete(name);
       onSuccess('Segment deleted successfully!');
-      onSegmentDeleted();      // notify App
+      onSegmentDeleted();
       fetchAll();
     } catch {
       onError('Failed to delete segment');
